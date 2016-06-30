@@ -1,0 +1,66 @@
+.header {
+  padding: 20px 20px;
+  border-bottom: 1px solid grey;
+  &__intro {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  &__descr {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  &__input-todo {
+    width: 100%;
+    padding: 10px;
+    padding-right: 50px;
+    box-sizing: border-box;
+    font-size: 20px;
+    border-radius: 4px;
+  }
+  &__input-wrapper {
+    position: relative;
+  }
+  &__priority-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 30px;
+    height: 30px;
+    background:green;
+    border-radius: 10px;
+    cursor: pointer;
+    &.show .priorities {
+      visibility: visible;
+    }
+  }
+}
+
+.priorities {
+  visibility: hidden;
+  position: absolute;
+  z-index: 10;
+  top: 110%;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  transform: translateX( -50% );
+  border: 1px solid black;
+  background: white;
+  &__list-el {
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+    background: violet;
+    margin-bottom: 5px;
+    &--low {
+      background: yellow;
+    }
+    &--normal {
+      background: green;
+    }
+    &--high {
+      background: red;
+    }
+  }
+}

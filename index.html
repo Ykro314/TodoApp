@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+  <head>
+   
+    <title>Todo App</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/style.css">
+    
+  </head>
+  
+  
+  
+  <body>
+
+    <section class="todoApp inner todoApplication" id="todoApplication">
+
+
+      <header class="header">
+
+        <h1 class="header__intro">ToDo App</h1>
+        <p class="header__descr">Post your todo list here, and manage it whatever you want. Visit <a href="">documentation page</a> for more information.</p>
+
+        <div class="header__input-wrapper">
+          <input class="header__input-todo" type="text" placeholder="Needs to be done"/>
+          <div class="header__priority-button">
+            <ul class="priorities">
+              <li class="priorities__list-el  priorities__list-el--low" data-priority="low"></li>
+              <li class="priorities__list-el  priorities__list-el--normal" data-priority="normal"></li>
+              <li class="priorities__list-el  priorities__list-el--high" data-priority="high"></li>
+            </ul>
+          </div>
+        </div>
+
+      </header>
+
+
+      <main>
+        <ul class="todo-list">
+
+        </ul>
+      </main>
+
+
+    </section>
+
+
+
+    <template id="element-template">
+
+      <div class="todo-el">
+
+        <label class="todo-el__checkbox">
+          <input type="checkbox"/>
+        </label>
+
+        <div class="todo-el__body">
+          <p class="todo-el__text"></p>
+          <input class="todo-el__input" type="text"/>
+          <time class="todo-el__date"></time>
+        </div>
+
+        <div class="todo-el__close-btn"></div>
+        <span class="todo-el__priority"></span>
+
+      </div>
+
+    </template>
+
+  <script src="js/libs/jquery.min.js"></script>
+  <script src="js/libs/underscore-min.js"></script>
+  <script src="js/libs/backbone-min.js"></script>
+  <script src="js/libs/backbone.localStorage-min.js"></script>
+  <script src="js/models/todo-model.js"></script>
+  <script src="js/collections/todos-col.js"></script>
+  <script src="js/views/app-view.js"></script>
+  <script src="js/views/todo-view.js"></script>
+  <script src="js/app.js"></script>
+  </body>
+  
+</html>

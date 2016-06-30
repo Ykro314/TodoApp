@@ -1,0 +1,100 @@
+.todo-el {
+  display: flex;
+  position: relative;
+  box-sizing: border-box;
+  padding-right: 50px;
+  padding-left: 10px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+  border: 1px solid black;
+  background: ghostwhite;
+  font-size: 20px;
+  &--edit {
+    .todo-el__input {
+      display: block;
+    }
+    .todo-el__text {
+      display: none;
+    }
+  }
+  &__text {
+    padding: 7px 5px;
+  }
+  &__body {
+    width: ~"calc( 100% - 70px )";
+  }
+  &__input {
+    margin-left: 10px;
+    width: 100%;
+    display: none;
+    padding: 5px;
+    box-sizing: border-box;
+  }
+  &__close-btn {
+    position: absolute;
+    top: ~"calc(50% - 10px)";
+    right: 20px;
+    width: 20px;
+    height: 20px;
+    background: white;
+    transition: transform 0.2s ease-out;
+    cursor: pointer;
+    &:hover {
+      transform: scale( 1.2 );
+    }
+    &:before,
+    &:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      width: 3px;
+      height: 25px;
+      background: black;
+      transform-origin: top;
+    }
+    &:before {
+      left: 0;
+      transform: rotate(-45deg );
+    }
+    &:after {
+      right: 0;
+      transform: rotate( 45deg );
+    }
+  }
+  &__priority {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    background: green;
+    width: 5px;
+    height: 100%;
+    &.low {
+      background: yellow;
+    }
+    &.normal {
+      background: green;
+    }
+    &.high {
+      background: red;
+    }
+  }
+  &__checkbox {
+    padding: 10px;
+    display: flex;
+    input {
+      display: block;
+      align-self: center;
+      width: 30px;
+      height: 30px;
+    }
+  }
+  &__date {
+    padding-left: 10px;
+    color: grey;
+    font-size: 13px;
+    font-weight: 300;
+    font-style: italic;
+  }
+}
