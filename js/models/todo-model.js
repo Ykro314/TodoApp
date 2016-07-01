@@ -15,6 +15,9 @@ app.Todo = Backbone.Model.extend({
     completed: false
   },
 
+  /**
+   * Toggle completed property in model and save it.
+   */
   toggle: function() {
     this.save( {
       completed: !this.get( "completed" )

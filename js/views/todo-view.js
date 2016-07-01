@@ -18,11 +18,17 @@ app.TodoView = Backbone.View.extend({
     "click .todo-el__priority": "changeTodoPriority",
     "click .todo-el__checkbox": "changeTodoCompleted"
   },
-
+  /**
+   * Invokes template method.
+   * @returns {*}
+   */
   render: function(){
     return this.template();
   },
-
+  /**
+   * Fills template with data and set it to the el property, returns object for chaining.
+   * @returns {app.TodoView}
+   */
   template: function (){
 
     function fillTemplate( template ) {
@@ -44,23 +50,21 @@ app.TodoView = Backbone.View.extend({
         checkbox.checked = false;
       }
 
-      //console.log( template );
-
       return template;
     }
 
     var template = document.querySelector( "#element-template" );
     var templateContent = template.content.children[0].cloneNode( true );
 
+    // Because while adding on enter, it repaints two times. Its a hotfix for bug.
     if( this.el.innerHTML ) {
       this.el.innerHTML = "";
     }
-    //this.$el.html( fillTemplate.call( this, templateContent) );
 
     this.el.appendChild( fillTemplate.call( this, templateContent ) );
 
     this.input = this.el.querySelector( ".todo-el__input" );
-    this.priorBtn = this.el.querySelector( ".todo-el__priority" );
+    //this.priorBtn = this.el.querySelector( ".todo-el__priority" );
 
     return this;
   },
@@ -71,12 +75,17 @@ app.TodoView = Backbone.View.extend({
     this.listenTo( this.model, "destroy", this.remove );
   },
 
+  /**
+   * Change view to edit mode. Focus on input.
+   */
   startEdit: function() {
     this.el.firstElementChild.classList.add( "todo-el--edit" );
     this.input.value = this.model.get( "title" );
     this.input.focus();
   },
-
+  /**
+   * Invokes on blur event. Work with data in input. If user correct title - save model. If user cleaned input - destroy todo.
+   */
   endEdit: function() {
     this.el.firstElementChild.classList.remove( "todo-el--edit" );
     if( this.input.value ) {
@@ -89,6 +98,10 @@ app.TodoView = Backbone.View.extend({
     }
   },
 
+  /**
+   * Invokes on keypress event on enter. Work with data in input. If user correct title - save model. If user cleaned input - destroy todo.
+   * @param event {object}
+   */
   endEditOnEnter: function( event ){
     var ENTER_KEY = 13;
     if( event.charCode !== ENTER_KEY ) {
@@ -104,14 +117,22 @@ app.TodoView = Backbone.View.extend({
     }
   },
 
+  /**
+   * Destroy model. View is firing destroy method, which removes view by event listener.
+   */
   destroyModel: function() {
     this.model.destroy();
   },
 
+  /**
+   * Change priority on click if it was changed. Then save the model.
+   * @param event {object}
+   */
   changeTodoPriority: function( event ) {
-    if( event.target.getAttribute( "data-prior" ) ) {
+    var priority = event.target.getAttribute( "data-prior" );
+    if( priority && this.model.get( "priority" ) !== priority ) {
       this.model.save({
-        priority: event.target.getAttribute( "data-prior" )
+        priority: priority
       })
     }
   },

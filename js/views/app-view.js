@@ -10,16 +10,17 @@ app.AppView = Backbone.View.extend({
   el: "#todoApplication",
 
   events: {
-    "keypress .header__input-todo": "createOnEnter",
-    "click .header__priority-button": "changePriority",
+    "keypress .header__input-todo": "createTodoOnEnter",
+    "click .header__priority-button": "changeNewTodoPriority",
     "click .clear": "clickOnClearHandler"
-    //"click .filters": "clickOnFilterHandler"
   },
-
+  /**
+   * Cache elements, bind listeners to the Todos collection, fill collection with data and render app.
+   */
   initialize: function( ) {
     this.input = this.el.querySelector( ".header__input-todo" );
     this.todoList = this.el.querySelector( ".todo-list" );
-    this.priorityBurtton = this.el.querySelector( ".header__priority-button" );
+    this.priorityButton = this.el.querySelector( ".header__priority-button" );
     this.filters = this.el.querySelectorAll( ".filters__el a" );
     this.main =  this.el.querySelector( "main" );
     this.footer = this.el.querySelector( "footer" );
@@ -36,6 +37,9 @@ app.AppView = Backbone.View.extend({
     this.render();
   },
 
+  /**
+   * If collection is empty - hide main and footer. Otherwise show it. Reacts on collection update event.
+   */
   render:function(){
     if( app.Todos.length === 0 ) {
       this.main.style.display = "none";
@@ -47,6 +51,10 @@ app.AppView = Backbone.View.extend({
     }
   },
 
+  /**
+   * Handle click on clear panel.
+   * @param event {object}
+   */
   clickOnClearHandler: function( event ){
     if( event.target.classList.contains( "clear__btn--complete-all" ) ) {
       this.markAllTodosCompleted();
@@ -64,12 +72,13 @@ app.AppView = Backbone.View.extend({
     })
   },
 
+  /**
+   * Create array with completed todos, then destroy all of them.
+   */
   deleteCompleted: function(){
     var completedArray = app.Todos.filter( function( el ){
-      console.log( el, el.get( "completed" ) );
       return el.get( "completed" );
     });
-    console.log( completedArray );
     _.invoke( completedArray, "destroy" );
   },
 
@@ -89,6 +98,9 @@ app.AppView = Backbone.View.extend({
     this.sortCollection( app.RoutedFilter );
   },
 
+  /**
+   * Repaint todo-list, only if app was rendered not the first time.
+   */
   sortListen: function(){
     if( this.firstInit ) {
       this.firstInit = false;
@@ -98,18 +110,41 @@ app.AppView = Backbone.View.extend({
       this.addAll();
     }
   },
-
+  
+  /**
+   * Create view for model and render it to the page by adding in todo-list element.
+   * @param todo {object}
+   */
   addOne: function( todo ) {
     var view = new app.TodoView( { model: todo } );
     this.todoList.appendChild( view.render().el );
   },
-
+  
   addAll: function() {
     this.todoList.innerHTML = "";
     app.Todos.each( this.addOne, this );
   },
 
-  getTodoText: function() {
+  /**
+   * If user pressed enter - create new Todo. 
+   * @param event {object}
+   */
+  createTodoOnEnter: function( event ) {
+    var ENTER_KEY = 13;
+    if( event.charCode !== ENTER_KEY ) {
+      return;
+    }
+    else if( event.charCode === ENTER_KEY && this.input.value ) {
+      app.Todos.create( this.getTodoData() );
+      this.input.value = "";
+    }
+  },
+
+  /**
+   * Create data object from input.
+   * @returns {{title: *, dateInMilliseconds: number, date: *, priority: string}}
+   */
+  getTodoData: function() {
 
     function setFormattedDate() {
       var date = new Date(),
@@ -129,60 +164,41 @@ app.AppView = Backbone.View.extend({
 
   },
 
-  createOnEnter: function( event ) {
-    var ENTER_KEY = 13;
-    if( event.charCode !== ENTER_KEY ) {
-      return;
-    }
-    else if( event.charCode === ENTER_KEY && this.input.value ) {
-      app.Todos.create( this.getTodoText() );
-      this.input.value = "";
-    }
-  },
-
-  changePriority: function( event ) {
+  /**
+   * Change priority for new Todo.
+   * @param event {object}
+   */
+  changeNewTodoPriority: function( event ) {
     event.target.classList.toggle( "show" );
-    if( event.target.getAttribute( "data-priority" ) ) {
-      var priority = event.target.getAttribute( "data-priority" );
-      this.input.setAttribute( "data-priority", priority );
-      this.priorityBurtton.style.background = this.priorityColors[ priority ];
-      this.priorityBurtton.classList.remove( "show" );
+    var priorityAttribute = event.target.getAttribute( "data-priority" );
+    if( priorityAttribute ) {
+      this.input.setAttribute( "data-priority", priorityAttribute );
+      this.priorityButton.style.background = this.priorityColors[ priorityAttribute ];
+      this.priorityButton.classList.remove( "show" );
     }
   },
 
+  /**
+   * Change active filter and highlight it.
+   * @param element {node}
+   */
   changeActiveFilter: function( element ){
     if( !this.activeFilter ){
-      element.style.color = "red";
+      element.classList.add( "active" );
     }
     if( this.activeFilter && element !== this.activeFilter ) {
-      this.activeFilter.style.color = "";
-      element.style.color = "red";
+      this.activeFilter.classList.remove( "active" );
+      element.classList.add( "active" );
     }
     this.activeFilter = element;
   },
 
-  sortCollection: function( filterName ){
-    switch ( filterName ) {
-      case "latest":
-        app.Todos.comparator = app.Todos.sortOnDateInc;
-        break;
-      case "newest":
-        app.Todos.comparator = app.Todos.sortOnDateDecr;
-        break;
-      case "top-pr":
-        app.Todos.comparator = app.Todos.sortOnTopPriority;
-        break;
-      case "low-pr":
-        app.Todos.comparator = app.Todos.sortOnLowPriority;
-        break;
-      case "completed":
-        app.Todos.comparator = app.Todos.sortCompletedFirst;
-        break;
-      case "remaining":
-        app.Todos.comparator = app.Todos.sortRemainingFirst;
-        break;
-    }
-
+  /**
+   * Change compatator function. Then sort collection.
+   * @param filtername {string}
+   */
+  sortCollection: function( filtername ) {
+    app.Todos.comparator = app.Todos.sortFunctions[ filtername ];
     app.Todos.sort();
   },
 

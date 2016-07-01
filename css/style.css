@@ -522,6 +522,9 @@ footer {
   border: 1px solid grey;
   border-radius: 4px;
 }
+.filters__el a.active {
+  color: red;
+}
 .clear {
   display: -webkit-flex;
   display: -ms-flexbox;
