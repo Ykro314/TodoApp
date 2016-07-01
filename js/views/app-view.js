@@ -12,13 +12,17 @@ app.AppView = Backbone.View.extend({
   events: {
     "keypress .header__input-todo": "createOnEnter",
     "click .header__priority-button": "changePriority",
-    "click .filters": "clickOnFilterHandler"
+    "click .clear": "clickOnClearHandler"
+    //"click .filters": "clickOnFilterHandler"
   },
 
   initialize: function( ) {
     this.input = this.el.querySelector( ".header__input-todo" );
     this.todoList = this.el.querySelector( ".todo-list" );
     this.priorityBurtton = this.el.querySelector( ".header__priority-button" );
+    this.filters = this.el.querySelectorAll( ".filters__el a" );
+    this.main =  this.el.querySelector( "main" );
+    this.footer = this.el.querySelector( "footer" );
     this.firstInit = true;
     this.activeFilter = null;
 
@@ -26,12 +30,62 @@ app.AppView = Backbone.View.extend({
     this.listenTo( app.Todos, "reset", this.addAll );
     this.listenTo( app.Todos, "sort", this.sortListen );
     this.listenTo( app.Todos, "filter", this.sortRoutes );
+    this.listenTo( app.Todos, "update", this.render );
 
     app.Todos.fetch();
+    this.render();
+  },
+
+  render:function(){
+    if( app.Todos.length === 0 ) {
+      this.main.style.display = "none";
+      this.footer.style.display = "none";
+    }
+    else {
+      this.main.style.display = "";
+      this.footer.style.display = "";
+    }
+  },
+
+  clickOnClearHandler: function( event ){
+    if( event.target.classList.contains( "clear__btn--complete-all" ) ) {
+      this.markAllTodosCompleted();
+    }
+    else if( event.target.classList.contains( "clear__btn--clear-completed" ) ){
+      this.deleteCompleted();
+    }
+  },
+
+  markAllTodosCompleted: function(){
+    app.Todos.forEach( function( el ){
+      if( el.get( "completed" ) === false ){
+        el.toggle();
+      }
+    })
+  },
+
+  deleteCompleted: function(){
+    var completedArray = app.Todos.filter( function( el ){
+      console.log( el, el.get( "completed" ) );
+      return el.get( "completed" );
+    });
+    console.log( completedArray );
+    _.invoke( completedArray, "destroy" );
   },
 
   sortRoutes: function(){
     console.log( "sortCollection", app.RoutedFilter );
+    var element = null;
+    function getProperFilterEl(){
+      Array.prototype.forEach.call( this.filters, function( el ){
+        if( el.getAttribute( "data-filter" ) === app.RoutedFilter ) {
+          element = el;
+          return;
+        }
+      } );
+      return element;
+    }
+    this.changeActiveFilter( getProperFilterEl.call( this ) );
     this.sortCollection( app.RoutedFilter );
   },
 
@@ -93,46 +147,6 @@ app.AppView = Backbone.View.extend({
       this.input.setAttribute( "data-priority", priority );
       this.priorityBurtton.style.background = this.priorityColors[ priority ];
       this.priorityBurtton.classList.remove( "show" );
-    }
-  },
-
-  clickOnFilterHandler: function( event ) {
-    if( event.target.tagName.toUpperCase() === "A" ) {
-      //event.preventDefault();
-
-      //if( !this.activeFilter ){
-      //  event.target.style.color = "red";
-      //}
-      //if( this.activeFilter && event.target !== this.activeFilter ) {
-      //  this.activeFilter.style.color = "";
-      //  event.target.style.color = "red";
-      //}
-      //
-      //switch ( event.target.getAttribute( "data-filter" ) ) {
-      //  case "latest":
-      //    app.Todos.comparator = app.Todos.sortOnDateInc;
-      //    break;
-      //  case "newest":
-      //    app.Todos.comparator = app.Todos.sortOnDateDecr;
-      //    break;
-      //  case "top-pr":
-      //    app.Todos.comparator = app.Todos.sortOnTopPriority;
-      //    break;
-      //  case "low-pr":
-      //    app.Todos.comparator = app.Todos.sortOnLowPriority;
-      //    break;
-      //  case "completed":
-      //    app.Todos.comparator = app.Todos.sortCompletedFirst;
-      //    break;
-      //  case "remaining":
-      //    app.Todos.comparator = app.Todos.sortRemainingFirst;
-      //    break;
-      //}
-      //
-      //app.Todos.sort();
-      //this.activeFilter = event.target;
-      this.changeActiveFilter( event.target );
-      this.sortCollection( event.target.getAttribute( "data-filter" ) )
     }
   },
 

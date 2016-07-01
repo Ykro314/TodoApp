@@ -502,6 +502,9 @@ p {
   font-weight: 300;
   font-style: italic;
 }
+footer {
+  padding-bottom: 20px;
+}
 .filters {
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -509,7 +512,7 @@ p {
   -webkit-justify-content: space-around;
       -ms-flex-pack: distribute;
           justify-content: space-around;
-  padding-bottom: 20px;
+  margin-bottom: 15px;
 }
 .filters__el a {
   display: block;
@@ -518,4 +521,18 @@ p {
   padding: 10px 18px;
   border: 1px solid grey;
   border-radius: 4px;
+}
+.clear {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+.clear__btn {
+  padding: 10px;
+  margin-left: 5px;
+  margin-bottom: 10px;
+  background: white;
+  border: 1px solid black;
+  border-radius: 5px;
+  cursor: pointer;
 }
