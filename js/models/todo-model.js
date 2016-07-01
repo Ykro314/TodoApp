@@ -10,7 +10,8 @@ app.Todo = Backbone.Model.extend({
   defaults: {
     title: "",
     date: "",
-    priority: "normal",
+    dateInMilliseconds: 0,
+    priority: "2",
     completed: false
   },
 

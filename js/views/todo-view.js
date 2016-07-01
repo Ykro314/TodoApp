@@ -14,25 +14,35 @@ app.TodoView = Backbone.View.extend({
     "click .todo-el__close-btn": "destroyModel",
     "dblclick .todo-el__text": "startEdit",
     "blur .todo-el__input": "endEdit",
-    "keypress .todo-el__input": "endEditOnEnter"
+    "keypress .todo-el__input": "endEditOnEnter",
+    "click .todo-el__priority": "changeTodoPriority",
+    "click .todo-el__checkbox": "changeTodoCompleted"
   },
 
   render: function(){
-    console.log( "invoke template" );
     return this.template();
   },
 
   template: function (){
-    console.log( "start templating" );
 
     function fillTemplate( template ) {
       var title = template.querySelector( ".todo-el__text" );
       var date = template.querySelector( ".todo-el__date" );
       var priority = template.querySelector( ".todo-el__priority" );
+      var checkbox = template.querySelector( ".todo-el__checkbox" );
 
       title.textContent = this.model.get( "title" );
       date.textContent = this.model.get( "date" );
-      priority.classList.add( this.model.get( "priority" ) );
+      priority.classList.add( this.priorityColors[ this.model.get( "priority" ) ] );
+
+      if( this.model.get( "completed" ) === true ) {
+        title.style.textDecoration = "line-through";
+        checkbox.checked = true;
+      }
+      else if( this.model.get( "completed" ) === false ) {
+        title.style.textDecoration = "";
+        checkbox.checked = false;
+      }
 
       //console.log( template );
 
@@ -50,6 +60,7 @@ app.TodoView = Backbone.View.extend({
     this.el.appendChild( fillTemplate.call( this, templateContent ) );
 
     this.input = this.el.querySelector( ".todo-el__input" );
+    this.priorBtn = this.el.querySelector( ".todo-el__priority" );
 
     return this;
   },
@@ -95,6 +106,24 @@ app.TodoView = Backbone.View.extend({
 
   destroyModel: function() {
     this.model.destroy();
+  },
+
+  changeTodoPriority: function( event ) {
+    if( event.target.getAttribute( "data-prior" ) ) {
+      this.model.save({
+        priority: event.target.getAttribute( "data-prior" )
+      })
+    }
+  },
+
+  changeTodoCompleted: function() {
+    this.model.toggle();
+  },
+
+  priorityColors: {
+    "1": "low",
+    "2": "normal",
+    "3": "high"
   }
 
 });

@@ -1,5 +1,6 @@
 .todo-el {
   display: flex;
+  overflow: hidden;
   position: relative;
   box-sizing: border-box;
   padding-right: 50px;
@@ -65,25 +66,62 @@
   &__priority {
     position: absolute;
     top: 0;
-    left: 0;
+    left: -50px;
     display: block;
     background: green;
-    width: 5px;
+    width: 55px;
     height: 100%;
+    transition: transform 0.3s;
+    cursor: pointer;
+    &:hover {
+      transform: translateX( 50px );
+    }
     &.low {
       background: yellow;
+      .todo-el__check-priority--low {
+        border-right: none;
+      }
     }
     &.normal {
       background: green;
+      .todo-el__check-priority--normal {
+        border-right: none;
+      }
     }
     &.high {
       background: red;
+      .todo-el__check-priority--high {
+        border-right: none;
+      }
     }
   }
-  &__checkbox {
+  &__check-priority {
+    box-sizing: border-box;
+    top: 0;
+    left: 0;
+    width: 90%;
+    height: 33.33%;
+    background: grey;
+    position: absolute;
+    border-right: 1px solid grey;
+    border-bottom: 1px solid grey;
+    &--low {
+      background: yellow;
+    }
+    &--normal {
+      top: 33.33%;
+      background: green;
+    }
+    &--high {
+      top: 66.66%;
+      background: red;
+      border-bottom: none;
+    }
+  }
+  &__checkbox-wrapper {
     padding: 10px;
     display: flex;
-    input {
+    input[ type="checkbox" ] {
       display: block;
       align-self: center;
       width: 30px;
